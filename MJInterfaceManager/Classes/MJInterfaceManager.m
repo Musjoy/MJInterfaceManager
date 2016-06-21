@@ -8,6 +8,9 @@
 
 #import "MJInterfaceManager.h"
 #import "WebInterface.h"
+#ifdef MODULE_UTILS
+#import "NSDictionary+Utils.h"
+#endif
 
 @implementation MJInterfaceManager
 
