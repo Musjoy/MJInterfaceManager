@@ -1,0 +1,6 @@
+use_frameworks!
+target 'MJInterfaceManager_Tests' do
+  pod 'MJInterfaceManager', :path => '../'
+  
+  
+end
