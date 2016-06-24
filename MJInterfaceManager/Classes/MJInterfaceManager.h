@@ -19,6 +19,8 @@
 static NSString *const API_DEVICE_REGISTER      = @"Device.register";
 /** 注册设备推送 */
 static NSString *const API_REGISTER_PUSH        = @"Device.registerPush";
+/** 推送标记为处理 */
+static NSString *const API_PUSH_HANDLED         = @"Push.pushHandled";
 
 // 错误记录
 /// 记录错误
@@ -34,6 +36,8 @@ static NSString *const API_ERROR_RECORD         = @"Error.record";
 + (void)deviceRegister;
 
 + (void)registerPush:(NSString *)deviceToken completion:(ActionCompleteBlock)completion;
+
++ (void)pushHandled:(NSNumber *)pushId completion:(ActionCompleteBlock)completion;
 
 + (void)recordError:(NSString *)errorCode location:(NSString *)errorLocation data:(NSDictionary *)errorData completion:(ActionCompleteBlock)completion;
 

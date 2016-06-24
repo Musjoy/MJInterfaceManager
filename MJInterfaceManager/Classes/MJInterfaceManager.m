@@ -74,6 +74,13 @@
     [WebInterface startRequest:API_REGISTER_PUSH describe:describe body:aSendDic returnClass:nil completion:completion];
 }
 
++ (void)pushHandled:(NSNumber *)pushId completion:(ActionCompleteBlock)completion
+{
+    NSString *describe = @"Push Handled";
+    NSDictionary *aSendDic = @{@"pushId":pushId};
+    [WebInterface startRequest:API_PUSH_HANDLED describe:describe body:aSendDic returnClass:nil completion:completion];
+}
+
 + (void)recordError:(NSString *)errorCode location:(NSString *)errorLocation data:(NSDictionary *)errorData completion:(ActionCompleteBlock)completion
 {
     if (errorCode.length == 0) {
