@@ -20,8 +20,8 @@
 {
     NSString *describe = @"Device Register";
 #ifdef kServerBaseHost
-    DBRequest *request = [WebInterface getRequestModel];
-    DBRequestHeader *head = request.head;
+    MJRequest *request = [WebInterface getRequestModel];
+    MJRequestHeader *head = request.head;
     // 读取本地纪录deviceId
     NSString *theBaseHost = [[kServerBaseHost componentsSeparatedByString:@"://"] objectAtIndex:1];
     NSString *key = [kRequestDeviceInfo stringByAppendingString:theBaseHost];
