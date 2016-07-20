@@ -51,7 +51,7 @@
                 && ![aDeviceId isKindOfClass:[NSNull class]]
                 && [data[@"deviceId"] intValue] > 0) {
                 // 保存设备id
-                DBRequest *request = [WebInterface getRequestModel];
+                MJRequest *request = [WebInterface getRequestModel];
                 request.head.deviceId = data[@"deviceId"];
 #ifdef kServerBaseHost
                 [[NSUserDefaults standardUserDefaults] setObject:[request.head toDictionary] forKey:key];
