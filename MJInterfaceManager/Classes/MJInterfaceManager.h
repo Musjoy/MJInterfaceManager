@@ -15,11 +15,11 @@
 #endif
 
 // 设备
-/** 设备注册 */
+/// 设备注册
 static NSString *const API_DEVICE_REGISTER      = @"Device.register";
-/** 注册设备推送 */
+/// 注册设备推送
 static NSString *const API_REGISTER_PUSH        = @"Device.registerPush";
-/** 推送标记为处理 */
+/// 推送标记为处理
 static NSString *const API_PUSH_HANDLED         = @"Push.pushHandled";
 
 // 错误记录
@@ -32,7 +32,7 @@ static NSString *const API_ERROR_RECORD         = @"Error.record";
 
 #pragma mark -
 
-/** 设备注册 */
+/// 设备注册
 + (void)deviceRegister;
 
 + (void)registerPush:(NSString *)deviceToken completion:(ActionCompleteBlock)completion;
