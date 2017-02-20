@@ -20,8 +20,7 @@
 {
     NSString *describe = @"Device Register";
 #ifdef kServerBaseHost
-    MJRequest *request = [WebInterface getRequestModel];
-    MJRequestHeader *head = request.head;
+    MJRequestHeader *head = [WebInterface getRequestHeaderModel];
     // 读取本地纪录deviceId
     NSString *theBaseHost = [[kServerBaseHost componentsSeparatedByString:@"://"] objectAtIndex:1];
     NSString *key = [kRequestDeviceInfo stringByAppendingString:theBaseHost];
@@ -33,35 +32,28 @@
         && [aDic[@"appVersion"] isEqualToString:head.appVersion]
         && [aDic[@"appState"] isEqualToNumber:head.appState]) {
         head.deviceId = aDic[@"deviceId"];
-        head.deviceUUID = nil;
-        head.deviceVersion = nil;
-        head.sysVersion = nil;
-        head.sysType = nil;
-        head.appVersion = nil;
-        head.appState = nil;
+        [WebInterface resetRequestMode];
         return;
     }
 #endif
     
-    [WebInterface startRequest:API_DEVICE_REGISTER describe:describe body:@{} returnClass:nil completion:^(BOOL isSucceed, NSString *message, id data) {
+    [WebInterface startRequest:API_DEVICE_REGISTER
+                      describe:describe
+                          body:@{}
+                    completion:^(BOOL isSucceed, NSString *message, id data) {
         if (isSucceed && [data isKindOfClass:[NSDictionary class]]) {
+#ifdef kServerBaseHost
             id aDeviceId = data[@"deviceId"];
-            
             if (aDeviceId
                 && ![aDeviceId isKindOfClass:[NSNull class]]
                 && [data[@"deviceId"] intValue] > 0) {
                 // 保存设备id
-                MJRequest *request = [WebInterface getRequestModel];
-                request.head.deviceId = data[@"deviceId"];
-#ifdef kServerBaseHost
-                [[NSUserDefaults standardUserDefaults] setObject:[request.head toDictionary] forKey:key];
+                MJRequestHeader *head = [WebInterface getRequestHeaderModel];
+                head.deviceId = data[@"deviceId"];
+
+                [[NSUserDefaults standardUserDefaults] setObject:[head toDictionary] forKey:key];
+                [WebInterface resetRequestMode];
 #endif
-                request.head.deviceUUID = nil;
-                request.head.deviceVersion = nil;
-                request.head.sysVersion = nil;
-                request.head.sysType = nil;
-                request.head.appVersion = nil;
-                request.head.appState = nil;
             }
         }
     }];
@@ -71,14 +63,14 @@
 {
     NSString *describe = @"Device Push Register";
     NSDictionary *aSendDic = @{@"deviceToken":deviceToken};
-    [WebInterface startRequest:API_REGISTER_PUSH describe:describe body:aSendDic returnClass:nil completion:completion];
+    [WebInterface startRequest:API_REGISTER_PUSH describe:describe body:aSendDic completion:completion];
 }
 
 + (void)pushHandled:(NSNumber *)pushId completion:(ActionCompleteBlock)completion
 {
     NSString *describe = @"Push Handled";
     NSDictionary *aSendDic = @{@"pushId":pushId};
-    [WebInterface startRequest:API_PUSH_HANDLED describe:describe body:aSendDic returnClass:nil completion:completion];
+    [WebInterface startRequest:API_PUSH_HANDLED describe:describe body:aSendDic completion:completion];
 }
 
 + (void)recordError:(NSString *)errorCode location:(NSString *)errorLocation data:(NSDictionary *)errorData completion:(ActionCompleteBlock)completion
@@ -99,7 +91,7 @@
             [aSendDic setObject:[NSString stringWithFormat:@"%@", errorData] forKey:@"errorData"];
         }
     }
-    [WebInterface startRequest:API_ERROR_RECORD describe:describe body:aSendDic returnClass:nil completion:completion];
+    [WebInterface startRequest:API_ERROR_RECORD describe:describe body:aSendDic completion:completion];
 }
 
 
