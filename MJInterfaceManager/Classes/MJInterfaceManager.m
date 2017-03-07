@@ -53,8 +53,8 @@
 
                 [[NSUserDefaults standardUserDefaults] setObject:[head toDictionary] forKey:key];
                 [WebInterface resetRequestMode];
-#endif
             }
+#endif
         }
     }];
 }
