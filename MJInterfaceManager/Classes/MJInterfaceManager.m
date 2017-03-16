@@ -7,6 +7,7 @@
 //
 
 #import "MJInterfaceManager.h"
+#import HEADER_SERVER_URL
 #import "WebInterface.h"
 #ifdef MODULE_UTILS
 #import "NSDictionary+Utils.h"
@@ -22,7 +23,7 @@
 #ifdef kServerBaseHost
     MJRequestHeader *head = [WebInterface getRequestHeaderModel];
     // 读取本地纪录deviceId
-    NSString *theBaseHost = [[kServerBaseHost componentsSeparatedByString:@"://"] objectAtIndex:1];
+    NSString *theBaseHost = [[kServerBaseHost componentsSeparatedByString:@"://"] lastObject];
     NSString *key = [kRequestDeviceInfo stringByAppendingString:theBaseHost];
     NSDictionary *aDic = [[NSUserDefaults standardUserDefaults] objectForKey:key];
     if (aDic && [aDic isKindOfClass:[NSDictionary class]]
