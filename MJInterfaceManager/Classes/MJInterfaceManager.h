@@ -14,6 +14,13 @@
 #define kRequestDeviceInfo  @"RequestDeviceInfo-"
 #endif
 
+/// 设备推送ID
+#ifndef kDevicePushInfo
+#define kDevicePushInfo     @"DevicePushInfo-"
+#endif
+
+static NSString *const kNoticGetDevicePushId    = @"NoticGetDevicePushId";
+
 // 设备
 /// 设备注册
 static NSString *const API_DEVICE_REGISTER      = @"Device.register";
@@ -27,6 +34,7 @@ static NSString *const API_PUSH_HANDLED         = @"Push.pushHandled";
 static NSString *const API_ERROR_RECORD         = @"Error.record";
 
 
+
 @interface MJInterfaceManager : NSObject
 
 
@@ -36,6 +44,8 @@ static NSString *const API_ERROR_RECORD         = @"Error.record";
 + (void)deviceRegister;
 
 + (void)registerPush:(NSString *)deviceToken completion:(ActionCompleteBlock)completion;
+
++ (NSString *)getDevicePushId;
 
 + (void)pushHandled:(NSNumber *)pushId completion:(ActionCompleteBlock)completion;
 

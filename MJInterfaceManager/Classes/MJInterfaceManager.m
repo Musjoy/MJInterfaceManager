@@ -13,6 +13,18 @@
 #import "NSDictionary+Utils.h"
 #endif
 
+#ifdef DEBUG
+#define kAppState @0        // app状态 0-开发状态 1-发布状态
+#else
+#define kAppState @1
+#endif
+
+#ifndef kServerBaseHost
+#define kServerBaseHost @""
+#endif
+
+static NSString *s_devicePushId = nil;
+
 @implementation MJInterfaceManager
 
 #pragma mark -
@@ -28,10 +40,11 @@
     NSDictionary *aDic = [[NSUserDefaults standardUserDefaults] objectForKey:key];
     if (aDic && [aDic isKindOfClass:[NSDictionary class]]
         && aDic[@"deviceId"]
+        && [aDic[@"deviceName"] isEqualToString:head.deviceName]
         && [aDic[@"deviceUUID"] isEqualToString:head.deviceUUID]
+        && [aDic[@"deviceIDFA"] isEqualToString:head.deviceIDFA]
         && [aDic[@"sysVersion"] isEqualToString:head.sysVersion]
-        && [aDic[@"appVersion"] isEqualToString:head.appVersion]
-        && [aDic[@"appState"] isEqualToNumber:head.appState]) {
+        && [aDic[@"appVersion"] isEqualToString:head.appVersion]) {
         head.deviceId = aDic[@"deviceId"];
         [WebInterface resetRequestMode];
         return;
@@ -62,9 +75,57 @@
 
 + (void)registerPush:(NSString *)deviceToken completion:(ActionCompleteBlock)completion
 {
+    NSString *theBaseHost = [[kServerBaseHost componentsSeparatedByString:@"://"] lastObject];
+    NSString *key = [kDevicePushInfo stringByAppendingString:theBaseHost];
+    
+    NSDictionary *aDic = [[NSUserDefaults standardUserDefaults] objectForKey:key];
+    if (aDic && [aDic isKindOfClass:[NSDictionary class]]
+        && aDic[@"devicePushId"]
+        && [aDic[@"deviceToken"] isEqualToString:deviceToken]
+        && [aDic[@"appState"] isEqualToNumber:kAppState]) {
+
+        s_devicePushId = aDic[@"devicePushId"];
+        
+        return;
+    }
+    
     NSString *describe = @"Device Push Register";
-    NSDictionary *aSendDic = @{@"deviceToken":deviceToken};
-    [WebInterface startRequest:API_REGISTER_PUSH describe:describe body:aSendDic completion:completion];
+    NSDictionary *aSendDic = @{@"deviceToken":deviceToken,
+                               @"appState":kAppState};
+    [WebInterface startRequest:API_REGISTER_PUSH describe:describe body:aSendDic completion:^(BOOL isSucceed, NSString *message, id data) {
+        if (isSucceed) {
+            if (data && [data isKindOfClass:[NSDictionary class]]) {
+                id devicePushId = data[@"devicePushId"];
+                if ([devicePushId isKindOfClass:[NSNumber class]]) {
+                    devicePushId = [devicePushId stringValue];
+                }
+                if ([devicePushId length] > 0) {
+                    s_devicePushId = devicePushId;
+                    NSDictionary *aDic = @{@"devicePushId"  : devicePushId,
+                                           @"deviceToken"   : deviceToken,
+                                           @"appState"      : kAppState};
+                    [[NSUserDefaults standardUserDefaults] setObject:aDic forKey:key];
+                    [[NSNotificationCenter defaultCenter] postNotificationName:kNoticGetDevicePushId object:nil];
+                }
+            }
+        }
+        completion(isSucceed, message, data);
+    }];
+}
+
++ (NSString *)getDevicePushId
+{
+    if (s_devicePushId == nil) {
+        // 读取本地的
+        NSString *theBaseHost = [[kServerBaseHost componentsSeparatedByString:@"://"] lastObject];
+        NSString *key = [kDevicePushInfo stringByAppendingString:theBaseHost];
+        NSDictionary *aDic = [[NSUserDefaults standardUserDefaults] objectForKey:key];
+        if (aDic && [aDic isKindOfClass:[NSDictionary class]]
+            && [aDic[@"devicePushId"] length] > 0) {
+            s_devicePushId = aDic[@"devicePushId"];
+        }
+    }
+    return s_devicePushId;
 }
 
 + (void)pushHandled:(NSNumber *)pushId completion:(ActionCompleteBlock)completion
