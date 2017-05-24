@@ -44,7 +44,9 @@ static NSString *s_devicePushId = nil;
         && [aDic[@"deviceUUID"] isEqualToString:head.deviceUUID]
         && [aDic[@"deviceIDFA"] isEqualToString:head.deviceIDFA]
         && [aDic[@"sysVersion"] isEqualToString:head.sysVersion]
-        && [aDic[@"appVersion"] isEqualToString:head.appVersion]) {
+        && [aDic[@"appVersion"] isEqualToString:head.appVersion]
+        && [aDic[@"deviceRegionCode"] isEqualToString:head.deviceRegionCode]
+        && [aDic[@"firstLanguage"] isEqualToString:head.firstLanguage]) {
         head.deviceId = aDic[@"deviceId"];
         [WebInterface resetRequestMode];
         return;
