@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'MJInterfaceManager'
-  s.version          = '0.1.0'
+  s.version          = '0.1.1'
   s.summary          = 'This is a manager for web interface.'
 
   s.homepage         = 'https://github.com/Musjoy/MJInterfaceManager'
