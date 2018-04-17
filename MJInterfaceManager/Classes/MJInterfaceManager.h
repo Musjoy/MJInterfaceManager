@@ -7,7 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "ActionProtocol.h"
+#import <ActionProtocol/ActionProtocol.h>
 
 /// 请求设备信息
 #ifndef kRequestDeviceInfo

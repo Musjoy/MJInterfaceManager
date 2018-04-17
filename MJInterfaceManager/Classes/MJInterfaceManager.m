@@ -8,9 +8,9 @@
 
 #import "MJInterfaceManager.h"
 #import HEADER_SERVER_URL
-#import "WebInterface.h"
-#ifdef MODULE_UTILS
-#import "NSDictionary+Utils.h"
+#import <WebInterface/WebInterface.h>
+#ifdef  MODULE_UTILS
+#import <MJUtils/NSDictionary+Utils.h>
 #endif
 
 #ifdef DEBUG
