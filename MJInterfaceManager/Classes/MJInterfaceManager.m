@@ -46,7 +46,8 @@ static NSString *s_devicePushId = nil;
         && [aDic[@"sysVersion"] isEqualToString:head.sysVersion]
         && [aDic[@"appVersion"] isEqualToString:head.appVersion]
         && [aDic[@"deviceRegionCode"] isEqualToString:head.deviceRegionCode]
-        && [aDic[@"firstLanguage"] isEqualToString:head.firstLanguage]) {
+        && [aDic[@"firstLanguage"] isEqualToString:head.firstLanguage]
+        && [aDic[@"timeZone"] isEqualToNumber:head.timeZone]) {
         head.deviceId = aDic[@"deviceId"];
         [WebInterface resetRequestMode];
         return;
@@ -87,7 +88,7 @@ static NSString *s_devicePushId = nil;
         && [aDic[@"appState"] isEqualToNumber:kAppState]) {
 
         s_devicePushId = aDic[@"devicePushId"];
-        
+        completion ? completion(YES, @"", aDic) : 0;
         return;
     }
     
@@ -111,7 +112,7 @@ static NSString *s_devicePushId = nil;
                 }
             }
         }
-        completion(isSucceed, message, data);
+        completion ? completion(isSucceed, message, data) : 0;
     }];
 }
 
