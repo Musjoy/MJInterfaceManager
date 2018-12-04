@@ -31,6 +31,10 @@ static NSString *s_devicePushId = nil;
 
 + (void)deviceRegister
 {
+#ifdef FUN_WEB_INTERFACE_DEVICE_NEED_APP
+    [self deviceAppRegister];
+    return;
+#endif
     NSString *describe = @"Device Register";
 #ifdef kServerBaseHost
     MJRequestHeader *head = [WebInterface getRequestHeaderModel];
@@ -80,9 +84,14 @@ static NSString *s_devicePushId = nil;
 
 + (void)registerPush:(NSString *)deviceToken completion:(ActionCompleteBlock)completion
 {
+#ifdef FUN_WEB_INTERFACE_DEVICE_NEED_APP
+    [self registerAppPush:deviceToken completion:completion];
+    return;
+#endif
     [self registerPush:API_REGISTER_PUSH deviceToken:deviceToken completion:completion];
 }
 
+#ifdef FUN_WEB_INTERFACE_DEVICE_NEED_APP
 + (void)deviceAppRegister
 {
     NSString *describe = @"Device App Register";
@@ -134,6 +143,7 @@ static NSString *s_devicePushId = nil;
 {
     [self registerPush:API_REGISTER_APP_PUSH deviceToken:deviceToken completion:completion];
 }
+#endif
 
 + (void)registerPush:(NSString *)action  deviceToken:(NSString *)deviceToken completion:(ActionCompleteBlock)completion
 {

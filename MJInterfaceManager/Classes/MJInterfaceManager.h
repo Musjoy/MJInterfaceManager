@@ -50,11 +50,7 @@ static NSString *const API_ERROR_RECORD         = @"Error.record";
 /// 设备注册
 + (void)deviceRegister;
 
-+ (void)deviceRegisterApp;
-
 + (void)registerPush:(NSString *)deviceToken completion:(ActionCompleteBlock)completion;
-
-+ (void)registerAppPush:(NSString *)deviceToken completion:(ActionCompleteBlock)completion;
 
 + (NSString *)getDevicePushId;
 
