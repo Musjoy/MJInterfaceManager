@@ -76,7 +76,66 @@ static NSString *s_devicePushId = nil;
     }];
 }
 
+
+
 + (void)registerPush:(NSString *)deviceToken completion:(ActionCompleteBlock)completion
+{
+    [self registerPush:API_REGISTER_PUSH deviceToken:deviceToken completion:completion];
+}
+
++ (void)deviceAppRegister
+{
+    NSString *describe = @"Device App Register";
+#ifdef kServerBaseHost
+    MJRequestHeader *head = [WebInterface getRequestHeaderModel];
+    // 读取本地纪录deviceId
+    NSString *theBaseHost = [[kServerBaseHost componentsSeparatedByString:@"://"] lastObject];
+    NSString *key = [kRequestDeviceAppInfo stringByAppendingString:theBaseHost];
+    NSDictionary *aDic = [[NSUserDefaults standardUserDefaults] objectForKey:key];
+    if (aDic && [aDic isKindOfClass:[NSDictionary class]]
+        && aDic[@"deviceAppId"]
+        && [aDic[@"deviceName"] isEqualToString:head.deviceName]
+        && [aDic[@"deviceUUID"] isEqualToString:head.deviceUUID]
+        && [aDic[@"deviceIDFA"] isEqualToString:head.deviceIDFA]
+        && [aDic[@"sysVersion"] isEqualToString:head.sysVersion]
+        && [aDic[@"appVersion"] isEqualToString:head.appVersion]
+        && [aDic[@"deviceRegionCode"] isEqualToString:head.deviceRegionCode]
+        && [aDic[@"firstLanguage"] isEqualToString:head.firstLanguage]
+        && [aDic[@"timeZone"] isEqualToNumber:head.timeZone]) {
+        head.deviceAppId = aDic[@"deviceAppId"];
+        [WebInterface resetRequestMode];
+        return;
+    }
+#endif
+    
+    [WebInterface startRequest:API_DEVICE_APP_REGISTER
+                      describe:describe
+                          body:@{}
+                    completion:^(BOOL isSucceed, NSString *message, id data) {
+                        if (isSucceed && [data isKindOfClass:[NSDictionary class]]) {
+#ifdef kServerBaseHost
+                            id aDeviceId = data[@"deviceAppId"];
+                            if (aDeviceId
+                                && ![aDeviceId isKindOfClass:[NSNull class]]
+                                && [data[@"deviceAppId"] intValue] > 0) {
+                                // 保存设备id
+                                MJRequestHeader *head = [WebInterface getRequestHeaderModel];
+                                head.deviceAppId = data[@"deviceAppId"];
+                                
+                                [[NSUserDefaults standardUserDefaults] setObject:[head toDictionary] forKey:key];
+                                [WebInterface resetRequestMode];
+                            }
+#endif
+                        }
+                    }];
+}
+
++ (void)registerAppPush:(NSString *)deviceToken completion:(ActionCompleteBlock)completion
+{
+    [self registerPush:API_REGISTER_APP_PUSH deviceToken:deviceToken completion:completion];
+}
+
++ (void)registerPush:(NSString *)action  deviceToken:(NSString *)deviceToken completion:(ActionCompleteBlock)completion
 {
     NSString *theBaseHost = [[kServerBaseHost componentsSeparatedByString:@"://"] lastObject];
     NSString *key = [kDevicePushInfo stringByAppendingString:theBaseHost];
@@ -86,7 +145,7 @@ static NSString *s_devicePushId = nil;
         && aDic[@"devicePushId"]
         && [aDic[@"deviceToken"] isEqualToString:deviceToken]
         && [aDic[@"appState"] isEqualToNumber:kAppState]) {
-
+        
         s_devicePushId = aDic[@"devicePushId"];
         completion ? completion(YES, @"", aDic) : 0;
         return;
@@ -95,7 +154,7 @@ static NSString *s_devicePushId = nil;
     NSString *describe = @"Device Push Register";
     NSDictionary *aSendDic = @{@"deviceToken":deviceToken,
                                @"appState":kAppState};
-    [WebInterface startRequest:API_REGISTER_PUSH describe:describe body:aSendDic completion:^(BOOL isSucceed, NSString *message, id data) {
+    [WebInterface startRequest:action describe:describe body:aSendDic completion:^(BOOL isSucceed, NSString *message, id data) {
         if (isSucceed) {
             if (data && [data isKindOfClass:[NSDictionary class]]) {
                 id devicePushId = data[@"devicePushId"];
@@ -115,6 +174,7 @@ static NSString *s_devicePushId = nil;
         completion ? completion(isSucceed, message, data) : 0;
     }];
 }
+
 
 + (NSString *)getDevicePushId
 {

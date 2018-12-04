@@ -13,6 +13,9 @@
 #ifndef kRequestDeviceInfo
 #define kRequestDeviceInfo  @"RequestDeviceInfo-"
 #endif
+#ifndef kRequestDeviceAppInfo
+#define kRequestDeviceAppInfo   @"RequestDeviceAppInfo-"
+#endif
 
 /// 设备推送ID
 #ifndef kDevicePushInfo
@@ -26,6 +29,10 @@ static NSString *const kNoticGetDevicePushId    = @"NoticGetDevicePushId";
 static NSString *const API_DEVICE_REGISTER      = @"Device.register";
 /// 注册设备推送
 static NSString *const API_REGISTER_PUSH        = @"Device.registerPush";
+/// 设备注册
+static NSString *const API_DEVICE_APP_REGISTER  = @"Device.registerApp";
+/// 注册设备推送
+static NSString *const API_REGISTER_APP_PUSH    = @"Device.registerAppPush";
 /// 推送标记为处理
 static NSString *const API_PUSH_HANDLED         = @"Push.pushHandled";
 
@@ -43,7 +50,11 @@ static NSString *const API_ERROR_RECORD         = @"Error.record";
 /// 设备注册
 + (void)deviceRegister;
 
++ (void)deviceRegisterApp;
+
 + (void)registerPush:(NSString *)deviceToken completion:(ActionCompleteBlock)completion;
+
++ (void)registerAppPush:(NSString *)deviceToken completion:(ActionCompleteBlock)completion;
 
 + (NSString *)getDevicePushId;
 
