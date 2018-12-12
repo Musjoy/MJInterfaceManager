@@ -157,6 +157,7 @@ static NSString *s_devicePushId = nil;
         && [aDic[@"appState"] isEqualToNumber:kAppState]) {
         
         s_devicePushId = aDic[@"devicePushId"];
+        [[NSNotificationCenter defaultCenter] postNotificationName:kNoticGetDevicePushId object:nil];
         completion ? completion(YES, @"", aDic) : 0;
         return;
     }
